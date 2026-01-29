@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz App</title>
+    <link rel="stylesheet" href__="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href__="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+
+        /* Container Wrapper */
+        .main-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding-top: 40px;
+        }
+
+        /* Floating Header */
+        .app-header {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .app-name {
+            font-size: 36px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -1px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            margin-bottom: 8px;
+        }
+
+        .app-tagline {
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Config Container */
+        .config-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 520px;
+            width: 100%;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .config-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a1a2e;
+            text-align: center;
+            margin-bottom: 32px;
+            letter-spacing: -0.5px;
+        }
+
+        .config-options {
+            margin-bottom: 28px;
+        }
+
+        .config-subtitle {
+            font-size: 13px;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .category-options,
+        .question-options,
+        .category-difficulty {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .category-option,
+        .question-option,
+        .difficulty-option {
+            padding: 12px 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            background: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .category-option:hover,
+        .question-option:hover,
+        .difficulty-option:hover {
+            border-color: #667eea;
+            background: #f5f3ff;
+        }
+
+        .category-option.active,
+        .question-option.active,
+        .difficulty-option.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: transparent;
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .question-option {
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .start-quiz-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 14px;
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            margin-top: 12px;
+        }
+
+        .start-quiz-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+        }
+
+        .start-quiz-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Quiz Container */
+        .quiz-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 0;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            display: none;
+        }
+
+        .quiz-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 24px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .quiz-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+            letter-spacing: -0.3px;
+        }
+
+        .quiz-timer {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 16px;
+            border-radius: 50px;
+        }
+
+        .quiz-timer .material-symbols-rounded {
+            color: #fff;
+            font-size: 20px;
+        }
+
+        .time-duration {
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .quiz-content {
+            padding: 40px 32px;
+        }
+
+        .question-text {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1a1a2e;
+            line-height: 1.5;
+            margin-bottom: 28px;
+        }
+
+        .answer-options {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .answer-options li {
+            padding: 16px 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 15px;
+            color: #374151;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .answer-options li:hover {
+            border-color: #667eea;
+            background: #f5f3ff;
+        }
+
+        .answer-options li.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+        }
+
+        .answer-options li.correct {
+            border-color: #10b981;
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .answer-options li.incorrect {
+            border-color: #ef4444;
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .quiz-footer {
+            padding: 24px 32px;
+            background: #f9fafb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .question-status {
+            font-size: 14px;
+            font-weight: 500;
+            color: #6b7280;
+        }
+
+        .next-question-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .next-question-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .next-question-btn:active {
+            transform: translateY(0);
+        }
+
+        .arrow-icon {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        /* Result Container */
+        .result-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 48px 40px;
+            max-width: 450px;
+            width: 100%;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            text-align: center;
+            display: none;
+        }
+
+        .result-img {
+            width: 140px;
+            height: 140px;
+            margin-bottom: 24px;
+            filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.15));
+        }
+
+        .result-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 16px;
+            letter-spacing: -0.5px;
+        }
+
+        .result-message {
+            font-size: 16px;
+            color: #6b7280;
+            line-height: 1.6;
+            margin-bottom: 32px;
+        }
+
+        .result-message b {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .restart-quiz-btn {
+            padding: 16px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 14px;
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .restart-quiz-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+        }
+
+        .restart-quiz-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-wrapper {
+                padding-top: 30px;
+            }
+
+            .app-header {
+                margin-bottom: 40px;
+            }
+
+            .app-name {
+                font-size: 30px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-wrapper {
+                padding-top: 20px;
+            }
+
+            .app-header {
+                margin-bottom: 30px;
+            }
+
+            .app-name {
+                font-size: 26px;
+            }
+
+            .app-tagline {
+                font-size: 13px;
+            }
+
+            .config-container,
+            .quiz-container,
+            .result-container {
+                padding: 24px;
+                border-radius: 20px;
+            }
+
+            .config-title,
+            .result-title {
+                font-size: 24px;
+            }
+
+            .quiz-header {
+                padding: 20px 24px;
+                flex-wrap: wrap;
+            }
+
+            .quiz-title {
+                font-size: 16px;
+            }
+
+            .quiz-content {
+                padding: 28px 24px;
+            }
+
+            .quiz-footer {
+                padding: 20px 24px;
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .question-text {
+                font-size: 18px;
+            }
+
+            .category-option,
+            .question-option,
+            .difficulty-option {
+                padding: 10px 16px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-wrapper">
+        <!-- App Header -->
+        <div class="app-header">
+            <h1 class="app-name">QuizMaster</h1>
+            <p class="app-tagline">Test Your Knowledge</p>
+        </div>
+
+        <div class="config-container">
+            <h2 class="config-title">Quiz Configuration</h2>
+            
+            <div class="config-options">
+                <h4 class="config-subtitle">Select Category</h4>
+                <div class="category-options">
+                    <button class="category-option active">Programming</button>
+                    <button class="category-option">Geography</button>
+                    <button class="category-option">Mathematics</button>
+                    <button class="category-option">Entertainment</button>
+                </div>
+            </div>
+
+            <div class="config-options">
+                <h4 class="config-subtitle">Number of Questions</h4>
+                <div class="question-options">
+                    <button class="question-option">5</button>
+                    <button class="question-option active">10</button>
+                    <button class="question-option">15</button>
+                    <button class="question-option">20</button>
+                </div>
+            </div>
+
+            <div class="config-options">
+                <h4 class="config-subtitle">Select Difficulty</h4>
+                <div class="category-difficulty">
+                    <button class="difficulty-option active" data-difficulty="easy">Easy</button>
+                    <button class="difficulty-option" data-difficulty="medium">Medium</button>
+                    <button class="difficulty-option" data-difficulty="hard">Hard</button>
+                </div>
+            </div>
+
+            <button class="start-quiz-btn">Start Quiz</button>
+        </div>
+
+        <div class="quiz-container">
+            <header class="quiz-header">
+                <h2 class="quiz-title">Dynamic Quiz Application</h2>
+                <div class="quiz-timer">
+                    <span class="material-symbols-rounded">timer</span>
+                    <p class="time-duration">30s</p>
+                </div>
+            </header>
+
+            <div class="quiz-content">
+                <h1 class="question-text"></h1>
+                <ul class="answer-options"></ul>
+            </div>
+
+            <div class="quiz-footer">
+                <p class="question-status"></p>
+                <button class="next-question-btn">   
+                    Next
+                    <span class="arrow-icon">→</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="result-container">
+            <img src="quiz-over.png" class="result-img" alt="Quiz Complete">
+            <h2 class="result-title">Quiz Completed!</h2>
+            <p class="result-message">You answered <b>0</b> out of <b>10</b> questions correctly. Great Effort</p>
+            <!-- Result Analytics -->
+    <div class="result-analytics">
+        <h3>Performance Analysis</h3>
+
+        <div class="chart-box">
+            <canvas id="timeChart"></canvas>
+        </div>
+
+        <div class="chart-box">
+         <canvas id="accuracyChart"></canvas>
+        </div>
+
+        <div class="chart-box">
+        <canvas canvas id="performanceChart"></canvas>
+    </div>
+</div>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+            <button class="restart-quiz-btn">Restart Quiz</button>
+        </div>
+    </div>
+
+    <script src="javascript/questions.js"></script>
+    <script src="javascript/script.js"></script>
+</body>
+</html>
